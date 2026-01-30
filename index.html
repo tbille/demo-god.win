@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo God - Wakahoom</title>
+    
+    <!-- Windows XP CSS Framework -->
+    <link rel="stylesheet" href="https://unpkg.com/xp.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            /* Windows XP Bliss wallpaper */
+            background-image: url('bliss.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #5A7FDF; /* Fallback XP blue */
+        }
+
+        /* XP Window Styling */
+        .window {
+            max-width: 600px;
+            width: 90vw;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+            animation: windowOpen 0.3s ease-out;
+            overflow: visible;
+        }
+
+        @keyframes windowOpen {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Bigger Title Bar */
+        .title-bar {
+            padding: 6px 4px;
+            height: auto;
+            min-height: 32px;
+        }
+
+        .title-bar-text {
+            padding: 2px 4px;
+        }
+
+        .title-bar-controls button {
+            min-height: 20px;
+            min-width: 20px;
+        }
+
+        .window-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            padding-bottom: 80px;
+            position: relative;
+            overflow: visible;
+            min-height: 400px;
+        }
+
+        /* Demo God Container */
+        .demo-god-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            overflow: visible;
+        }
+
+        /* Demo God Image */
+        .demo-god-image {
+            max-width: 400px;
+            width: 80%;
+            height: auto;
+            display: block;
+            border-radius: 4px;
+            transition: transform 0.1s ease;
+            transform-origin: center;
+        }
+
+        /* Prayer Button - Fixed at bottom */
+        #prayer {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ff5722;
+            cursor: pointer;
+            user-select: none;
+            text-align: center;
+            display: block;
+            min-width: 200px;
+            padding: 12px 24px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .demo-god-image {
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .window {
+                width: 95vw;
+            }
+
+            .demo-god-image {
+                max-width: 250px;
+            }
+
+            #prayer {
+                font-size: 32px;
+                padding: 8px 16px;
+                min-width: 150px;
+                bottom: 10px;
+            }
+
+            .window-body {
+                padding: 10px;
+                padding-bottom: 70px;
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- XP Window -->
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">Send your demo god prayers</div>
+            <div class="title-bar-controls">
+                <button aria-label="Minimize"></button>
+                <button aria-label="Maximize"></button>
+                <button aria-label="Close"></button>
+            </div>
+        </div>
+        
+        <!-- Window Body -->
+        <div class="window-body">
+            <div class="demo-god-container">
+                <img src="demo-god.png" alt="The Demo God" class="demo-god-image">
+            </div>
+            <button id="prayer">Wakahoom</button>
+        </div>
+    </div>
+
+    <script>
+        const prayer = document.getElementById('prayer');
+        const demoGod = document.querySelector('.demo-god-image');
+        let currentScale = 1;
+
+        prayer.addEventListener('click', () => {
+            // Grow demo-god by 20%
+            currentScale = currentScale * 1.2;
+            
+            // Calculate dramatic rotation range that increases with scale
+            const rotationRange = currentScale * 30;
+            const randomRotation = (Math.random() * rotationRange * 2) - rotationRange;
+            
+            // Apply both scale and rotation to demo-god
+            demoGod.style.transform = `scale(${currentScale}) rotate(${randomRotation}deg)`;
+        });
+
+        // Reset demo-god on Escape key press
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                currentScale = 1;
+                demoGod.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    </script>
+</body>
+</html>
