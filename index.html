@@ -23,10 +23,13 @@
         body {
             font-family: "Tahoma", "Microsoft Sans Serif", sans-serif;
             min-height: 100vh;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             touch-action: manipulation;
+            overflow: hidden;
+            position: relative;
             
             /* Windows XP Bliss wallpaper */
             background-image: url('bliss.webp');
@@ -91,6 +94,7 @@
             justify-content: center;
             width: 100%;
             overflow: visible;
+            min-height: 400px;
         }
 
         /* Demo God Image */
@@ -102,6 +106,10 @@
             border-radius: 4px;
             transition: transform 0.1s ease;
             transform-origin: center;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         /* Prayer Button - Fixed at bottom */
@@ -119,8 +127,43 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 100;
+            z-index: 2000;
             touch-action: manipulation;
+        }
+
+        /* Toto-God Announcement */
+        #toto-announcement {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            font-weight: bold;
+            color: #ff0000;
+            text-align: center;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8),
+                         0 0 20px rgba(255, 0, 0, 0.8);
+            z-index: 3000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            line-height: 1.2;
+            max-width: 90vw;
+            padding: 20px;
+        }
+
+        #toto-announcement.show {
+            opacity: 1;
+        }
+
+        /* Blink animation for TOTO GOD text */
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        #toto-announcement .blink {
+            animation: blink 0.5s infinite;
         }
 
         /* Responsive Design */
@@ -176,18 +219,94 @@
         </div>
     </div>
 
+    <!-- Toto-God Announcement -->
+    <div id="toto-announcement">YOU INVOKED <span class="blink">TOTO GOD!!!</span><br>BEHOLD.</div>
+
     <script>
         const prayer = document.getElementById('prayer');
         const demoGod = document.querySelector('.demo-god-image');
+        const totoAnnouncement = document.getElementById('toto-announcement');
         let currentScale = 1;
+        
+        // Easter egg variables
+        const urlParams = new URLSearchParams(window.location.search);
+        const invokeToto = urlParams.get('invoke') === 'toto';
+        
+        let clickCount = 0;
+        let easterEggTriggered = false;
+        let easterEggThreshold = invokeToto ? 10 : Math.floor(Math.random() * 11) + 10; // Debug: 10, Normal: Random 10-20
+        let easterEggProbability = invokeToto ? 1.0 : 0.25; // Debug: 100%, Normal: 25%
+        let totoGodShowing = false;
+        let savedScale = 1;
+        let savedRotation = 0;
 
         prayer.addEventListener('click', () => {
+            // Increment click counter
+            clickCount++;
+            
+            // If toto-god is showing, swap back to demo-god and restore scale
+            if (totoGodShowing) {
+                demoGod.src = 'demo-god.png';
+                demoGod.alt = 'The Demo God';
+                totoGodShowing = false;
+                currentScale = savedScale; // Restore saved scale
+                // Hide the announcement
+                totoAnnouncement.classList.remove('show');
+                // Reset all the fullscreen CSS properties
+                demoGod.style.position = '';
+                demoGod.style.top = '';
+                demoGod.style.left = '';
+                demoGod.style.width = '';
+                demoGod.style.height = '';
+                demoGod.style.maxWidth = '';
+                demoGod.style.objectFit = '';
+                demoGod.style.zIndex = '';
+                demoGod.style.transform = `scale(${currentScale}) rotate(${savedRotation}deg)`;
+                return; // Skip the normal growth for this click
+            }
+            
             // Grow demo-god by 20%
             currentScale = currentScale * 1.2;
             
             // Calculate dramatic rotation range that increases with scale
             const rotationRange = currentScale * 30;
             const randomRotation = (Math.random() * rotationRange * 2) - rotationRange;
+            
+            // Easter egg: Random chance to swap to toto-god FULL SCREEN
+            if (!easterEggTriggered && clickCount === easterEggThreshold) {
+                easterEggTriggered = true;
+                if (Math.random() < easterEggProbability) { // Normal: 25%, Debug mode: 100%
+                    savedScale = currentScale; // Save current scale
+                    savedRotation = randomRotation; // Save current rotation
+                    demoGod.src = 'toto-god.png';
+                    demoGod.alt = 'The Toto God';
+                    totoGodShowing = true;
+                    // Show the announcement
+                    totoAnnouncement.classList.add('show');
+                    // Make toto-god fill viewport naturally (no scale transform)
+                    demoGod.style.transform = 'none';
+                    demoGod.style.position = 'fixed';
+                    demoGod.style.top = '0';
+                    demoGod.style.left = '0';
+                    demoGod.style.width = '100vw';
+                    demoGod.style.height = '100vh';
+                    demoGod.style.maxWidth = '100vw';
+                    demoGod.style.objectFit = 'cover';
+                    demoGod.style.zIndex = '1000';
+                    // Launch confetti and return early
+                    if (typeof confetti !== 'undefined') {
+                        confetti({
+                            particleCount: 50,
+                            spread: 70,
+                            origin: { x: 0.5, y: 0.8 },
+                            colors: ['#ff5722', '#4caf50', '#ffd700', '#ff1744', '#2196f3'],
+                            zIndex: 200,
+                            disableForReducedMotion: true
+                        });
+                    }
+                    return; // Skip normal transform
+                }
+            }
             
             // Apply both scale and rotation to demo-god
             demoGod.style.transform = `scale(${currentScale}) rotate(${randomRotation}deg)`;
