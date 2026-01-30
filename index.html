@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Demo God - Wakahoom</title>
     
     <!-- Windows XP CSS Framework -->
     <link rel="stylesheet" href="https://unpkg.com/xp.css">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
     
     <style>
         * {
@@ -21,6 +24,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            touch-action: manipulation;
             
             /* Windows XP Bliss wallpaper */
             background-image: url('bliss.webp');
@@ -114,6 +118,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
+            touch-action: manipulation;
         }
 
         /* Responsive Design */
@@ -184,6 +189,21 @@
             
             // Apply both scale and rotation to demo-god
             demoGod.style.transform = `scale(${currentScale}) rotate(${randomRotation}deg)`;
+            
+            // Launch confetti from button!
+            if (typeof confetti !== 'undefined') {
+                confetti({
+                    particleCount: 50,
+                    spread: 70,
+                    origin: {
+                        x: 0.5,
+                        y: 0.8
+                    },
+                    colors: ['#ff5722', '#4caf50', '#ffd700', '#ff1744', '#2196f3'],
+                    zIndex: 200,
+                    disableForReducedMotion: true
+                });
+            }
         });
 
         // Reset demo-god on Escape key press
